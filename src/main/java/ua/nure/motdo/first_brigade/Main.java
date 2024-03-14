@@ -5,15 +5,19 @@ public class Main {
     public static Function secondDerivative;
 
     public static void main(String[] args) {
+//        1 function
 //        firstDerivative = (x) -> 12 * Math.pow(x, 3) + 2 * (x - 1);
 //        secondDerivative = (x) -> 36 * Math.pow(x, 2) + 2;
 //        double resultPoint = findMinimumOfFunc(4, 0.0001);
 
 //        System.out.println(resultPoint);
 
-        firstDerivative = (x) -> 12 * Math.pow(x, 3) + 2 * (x - 1);
-        secondDerivative = (x) -> 36 * Math.pow(x, 2) + 2;
-        double resultPoint = findMinimumOfFunc(4, 0.0001);
+//        2 function
+        firstDerivative = (x) -> (Math.log(x) - 1) / (Math.pow(Math.log(x), 2));
+        secondDerivative = (x) -> ((1 / x) * (Math.pow(Math.log(x), 2)) -
+                2 * (Math.log(x) - 1) * (1 / x) * (Math.log(x))) /
+                (Math.pow(Math.log(x), 4));
+        double resultPoint = findMinimumOfFunc(10, 0.0001);
 
         System.out.println(resultPoint);
     }
