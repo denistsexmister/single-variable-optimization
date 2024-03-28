@@ -1,8 +1,10 @@
 package ua.nure.motdo.first_brigade;
 
+import java.util.function.Function;
+
 public class Main {
-    public static Function firstDerivative;
-    public static Function secondDerivative;
+    public static Function<Double, Double> firstDerivative;
+    public static Function<Double, Double> secondDerivative;
 
     public static void main(String[] args) {
 //        1 function
@@ -14,12 +16,10 @@ public class Main {
 
 //        2 function
         firstDerivative = (x) -> (Math.log(x) - 1) / (Math.pow(Math.log(x), 2));
-        secondDerivative = (x) -> ((1 / x) * (Math.pow(Math.log(x), 2)) -
-                2 * (Math.log(x) - 1) * (1 / x) * (Math.log(x))) /
-                (Math.pow(Math.log(x), 4));
-        double resultPoint = findMinimumOfFunc(10, 0.0001);
+        secondDerivative = (x) -> -((Math.log(x) - 2) / (x * Math.pow(Math.log(x), 3)));
+        double resultPoint = findMinimumOfFunc(4, 0.0001);
 
-        System.out.println(resultPoint);
+        //System.out.println(resultPoint);// TODO: implement bounded newton method
     }
 
     public static double findMinimumOfFunc(double startPoint, double accuracy) {
@@ -36,10 +36,10 @@ public class Main {
     }
 
     public static double calculateFirstDerivativeInPoint(double x) {
-        return firstDerivative.function(x);
+        return firstDerivative.apply(x);
     }
 
     public static double calculateSecondDerivativeInPoint(double x) {
-        return secondDerivative.function(x);
+        return secondDerivative.apply(x);
     }
 }
