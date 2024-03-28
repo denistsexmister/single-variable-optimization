@@ -1,26 +1,34 @@
 package ua.nure.motdo.first_brigade;
 
+import org.lsmp.djep.djep.DJep;
+import org.nfunk.jep.JEP;
+import org.nfunk.jep.Node;
+import org.nfunk.jep.ParseException;
+
 import java.util.function.Function;
 
 public class Main {
-    public static Function<Double, Double> function;
-    public static Function<Double, Double> firstDerivative;
-    public static Function<Double, Double> secondDerivative;
+    private static Function<Double, Double> function;
+
+    private static String equation;
+    private final static JEP equationSolver = new JEP();
+    private final static DJep derivativeFinder = new DJep();
+
+    static {
+        equationSolver.addStandardConstants();
+        equationSolver.addStandardFunctions();
+
+        derivativeFinder.addStandardConstants();
+        derivativeFinder.addStandardFunctions();
+        derivativeFinder.addStandardDiffRules();
+    }
 
     public static void main(String[] args) {
-//        1 function
-//        function = (x) -> 3 * Math.pow(x, 4) + Math.pow(x - 1, 2);
-//        firstDerivative = (x) -> 12 * Math.pow(x, 3) + 2 * (x - 1);
-//        secondDerivative = (x) -> 36 * Math.pow(x, 2) + 2;
-//        double resultPoint = newtonRaphsonMethod(0, 4, 0.0001);
-//
-//        System.out.println(resultPoint);
-
-//        2 function
-        function = (x) -> x / Math.log(x);
-        firstDerivative = (x) -> (Math.log(x) - 1) / (Math.pow(Math.log(x), 2));
-        secondDerivative = (x) -> -((Math.log(x) - 2) / (x * Math.pow(Math.log(x), 3)));
-        double resultPoint = newtonRaphsonMethod(2, 4, 0.0001);
+        equation = "3 * x^4 + (x - 1)^2";
+        equationSolver.addVariable("x", 0);
+        equationSolver.parseExpression(equation);
+        function = (x) -> { equationSolver.addVariable("x", x); return equationSolver.getValue(); };
+        double resultPoint = newtonRaphsonMethod(4, 0.0001);
 
         System.out.println(resultPoint);
     }
@@ -54,9 +62,37 @@ public class Main {
         return function.apply(x);
     }
     public static double calculateFirstDerivativeInPoint(double x) {
-        return firstDerivative.apply(x);
+        try {
+            derivativeFinder.addVariable("x", 0);
+            Node equationNode = derivativeFinder.parse(equation);
+
+            Node firstDerivativeNode = derivativeFinder.differentiate(equationNode, "x");
+
+            JEP tempSolver = new JEP();
+            tempSolver.addVariable("x", x);
+            tempSolver.parseExpression(derivativeFinder.toString(firstDerivativeNode));
+
+
+            return tempSolver.getValue();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
     public static double calculateSecondDerivativeInPoint(double x) {
-        return secondDerivative.apply(x);
+        try {
+            derivativeFinder.addVariable("x", 0);
+            Node equationNode = derivativeFinder.parse(equation);
+
+            Node firstDerivativeNode = derivativeFinder.differentiate(equationNode, "x");
+            Node secondDerivativeNode = derivativeFinder.differentiate(firstDerivativeNode, "x");
+
+            JEP tempSolver = new JEP();
+            tempSolver.addVariable("x", x);
+            tempSolver.parseExpression(derivativeFinder.toString(secondDerivativeNode));
+
+            return tempSolver.getValue();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
